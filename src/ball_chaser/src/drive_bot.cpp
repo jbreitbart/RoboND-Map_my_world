@@ -11,7 +11,7 @@ ros::Publisher motor_command_publisher;
 
 // This callback function executes whenever a safe_move service is requested
 bool handle_command_robot_request(ball_chaser::DriveToTarget::Request &req, ball_chaser::DriveToTarget::Response &res) {
-    ROS_INFO("DriveToTarget received - x:%1.2f, z:%1.2f", (float)req.linear_x, (float)req.angular_z);
+    // ROS_INFO("DriveToTarget received - x:%1.2f, z:%1.2f", req.linear_x, req.angular_z);
 
     // 0.5  0.0 -> forward
     // 0.0  0.5 -> left
@@ -28,9 +28,9 @@ bool handle_command_robot_request(ball_chaser::DriveToTarget::Request &req, ball
     motor_command_publisher.publish(motor_command);
 
     // Return a response message
-    res.msg_feedback = "Motor command - x: " + std::to_string(motor_command.linear.x) +
-                       " , z: " + std::to_string(motor_command.linear.y);
-    ROS_INFO_STREAM(res.msg_feedback);
+    // res.msg_feedback = "Motor command - x: " + std::to_string(motor_command.linear.x) +
+    //                   " , z: " + std::to_string(motor_command.angular.z);
+    // ROS_INFO_STREAM(res.msg_feedback);
 
     return true;
 }
