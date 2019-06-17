@@ -1,0 +1,8 @@
+prefix=/home/jbreitbart/temp/nano/go_chase_it/devel
+
+Name: my_robot
+Description: Description of my_robot
+Version: 0.0.0
+Cflags: 
+Libs: -L/home/jbreitbart/temp/nano/go_chase_it/devel/lib 
+Requires: 
