@@ -24,57 +24,67 @@ void process_image_callback(const sensor_msgs::Image img) {
 
     constexpr int white_pixel = 255;
 
+    assert(img.step % 3 == 0);
+
     // TODO: Loop through each pixel in the image and check if there's a bright white one
     // Then, identify if this pixel falls in the left, mid, or right side of the image
     // Depending on the white ball position, call the drive_bot function and pass velocities to it
     // Request a stop when there's no white ball seen by the camera
 
-    int x = 0;
-    int y = 0;
-    for (y = 0; y < img.height; ++y) {
-        bool found = false;
-        for (x = 0; x < img.step; ++x) {
-            if (img.data[x + y * img.step] == white_pixel) {
-                ROS_INFO("Found ball at x:%d, y:%d!", x, y);
-                found = true;
-                break;
+    int counter_left = 0;
+    int counter_right = 0;
+    int counter_middle = 0;
+
+    for (int y = 0; y < img.height; ++y) {
+        for (int stepper = 0; stepper < img.step; stepper += 3) {
+
+            // index in the array
+            const int index = stepper + y * img.step;
+
+            if (img.data[index] == white_pixel && img.data[index + 1] == white_pixel &&
+                img.data[index + 2] == white_pixel) {
+                // left third of the image
+                const int left_border = img.step / 3;
+                // right third of the image
+                const int right_border = img.step / 3 * 2;
+
+                if (stepper < left_border) {
+                    ++counter_left;
+                } else if (stepper >= right_border) {
+                    ++counter_right;
+                } else {
+                    ++counter_middle;
+                }
             }
-        }
-        if (found) {
-            break;
         }
     }
 
-    if (x == img.step && y == img.height) {
+    // there is no ball
+    if (counter_left == 0 && counter_middle == 0 && counter_right == 0) {
         // send stop
         ROS_INFO("Send stop!");
         drive_robot(0.0, 0.0);
         return;
     }
 
-    const int left_border = img.step / 3;
-    const int right_border = img.step / 3 * 2;
-
-    if (x < left_border) {
+    // more pixels on the left side
+    if (counter_left > counter_middle && counter_left > counter_right) {
         // drive left
         ROS_INFO("Send left");
         drive_robot(0.0, 0.5);
         return;
     }
 
-    if (x >= right_border) {
+    if (counter_right > counter_left && counter_right > counter_middle) {
         // drive right
         ROS_INFO("Send right");
         drive_robot(0.0, -0.5);
         return;
     }
 
-    if (x > left_border && x < right_border) {
-        // drive forward
-        ROS_INFO("Send forward");
-        drive_robot(0.5, 0.0);
-        return;
-    }
+    // drive forward
+    ROS_INFO("Send forward");
+    drive_robot(0.5, 0.0);
 }
 
 int main(int argc, char **argv) {
