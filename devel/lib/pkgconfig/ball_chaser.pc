@@ -1,8 +1,0 @@
-prefix=/home/jbreitbart/temp/nano/go_chase_it/devel
-
-Name: ball_chaser
-Description: Description of ball_chaser
-Version: 0.0.0
-Cflags: -I/home/jbreitbart/temp/nano/go_chase_it/devel/include
-Libs: -L/home/jbreitbart/temp/nano/go_chase_it/devel/lib 
-Requires: 
